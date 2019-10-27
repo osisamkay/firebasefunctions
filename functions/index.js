@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-
-// Firebase init
+const uuidv5 = require("uuid/v5");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
@@ -27,3 +26,10 @@ app.post("/", (req, res) => {
 });
 
 exports.users = functions.https.onRequest(app);
+
+exports.onCreate = functions.database
+  .ref("/users/{userId}")
+  .onCreate((snap, context) => {
+    const newId = uuidv5(Date.now().toString(), uuidv5.DNS);
+    return snap.ref.update({ id: newId });
+  });
