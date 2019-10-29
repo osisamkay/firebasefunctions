@@ -25,6 +25,21 @@ app.post("/", (req, res) => {
     });
 });
 
+app.get("/", (req, res) => {
+  return admin
+    .database()
+    .ref("/users")
+    .on(
+      "value",
+      snapshot => {
+        return res.status(200).send(snapshot.val());
+      },
+      error => {
+        return res.status(500).send("Oops something happened: " + error);
+      }
+    );
+});
+
 exports.users = functions.https.onRequest(app);
 
 exports.onCreate = functions.database
